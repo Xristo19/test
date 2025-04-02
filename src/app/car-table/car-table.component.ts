@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {CarIndex, CARS_DATA} from '../assets/car-data';
+import {CarFields, Car, CARS_DATA} from '../assets/car-data';
 
 @Component({
   selector: 'app-car-table',
@@ -7,20 +7,39 @@ import {CarIndex, CARS_DATA} from '../assets/car-data';
   styleUrls: ['./car-table.component.css']
 })
 export class CarTableComponent {
-  cars = CARS_DATA;
-  groupedCars: { [brand: string]: any[] } = {};
+  cars: Car[] = [];
+  groupedCars: { [brand: string]: Car[] } = {};
+
 
   constructor() {
+    this.cars = this.fillMissingData(CARS_DATA);
     this.groupCars();
+  }
+
+  fillMissingData(data: any[][]): Car[] {
+    let lastCar: Partial<Car> = {};
+
+    return data.map(row => {
+      const car: Car = {
+        brand: row[CarFields.Brand] ?? lastCar.brand ?? "Unknown",
+        model: row[CarFields.Model] ?? lastCar.model ?? "Unknown",
+        transmission: row[CarFields.Transmission] ?? lastCar.transmission ?? "Unknown",
+        price: row[CarFields.Price] ?? lastCar.price ?? "Unknown",
+        priceFlag: row[CarFields.PriceFlag] ?? lastCar.priceFlag ?? 0,
+        registryCode: row[CarFields.RegistryCode] ?? "Unknown"
+      };
+
+      lastCar = car; // Update last known values
+      return car;
+    });
   }
 
   groupCars() {
     this.cars.forEach(car => {
-      const brand = car[CarIndex.Brand] || "Unknown";
-      if (!this.groupedCars[brand]) {
-        this.groupedCars[brand] = [];
+      if (!this.groupedCars[car.brand]) {
+        this.groupedCars[car.brand] = [];
       }
-      this.groupedCars[brand].push(car);
+      this.groupedCars[car.brand].push(car);
     });
   }
 
@@ -33,5 +52,4 @@ export class CarTableComponent {
   }
 
   protected readonly Object = Object;
-  protected readonly CarIndex = CarIndex;
 }

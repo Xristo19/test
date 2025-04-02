@@ -1,8 +1,9 @@
-<div *ngFor="let brand of Object.keys(groupedCars)">
+<div *ngFor="let brand of Object.keys(groupedCars)" class="brand-group">
   <h2>{{ brand }}</h2>
   <table>
     <thead>
     <tr>
+      <th>Brand</th>
       <th>Model</th>
       <th>Transmission</th>
       <th>Price</th>
@@ -11,12 +12,13 @@
     </thead>
     <tbody>
     <tr *ngFor="let car of groupedCars[brand]">
-      <td>{{ car[CarIndex.Model] }}</td>
-      <td>{{ car[CarIndex.Transmission] }}</td>
-      <td [style.color]="getPriceColor(car[CarIndex.PriceFlag])">
-        {{ car[CarIndex.Price] }}
+      <td>{{ car.brand }}</td>
+      <td>{{ car.model }}</td>
+      <td>{{ car.transmission }}</td>
+      <td [style.color]="getPriceColor(car.priceFlag)">{{ car.price }}</td>
+      <td>
+        <button (click)="showCode(car.registryCode)">Show Code</button>
       </td>
-      <td><button (click)="showCode(car[CarIndex.RegistryCode])">Show Code</button></td>
     </tr>
     </tbody>
   </table>
